@@ -263,46 +263,57 @@ p.lead{font-size:15.5px; color:var(--ink-2); max-width:70ch;}
 .shead{font-size:11.5px; font-weight:700;}
 
 .meth-block{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); margin-bottom:18px;}
-.partner-hero{position:relative; background:linear-gradient(135deg, var(--teal-deep), var(--teal)); border-radius:18px; padding:30px 30px 26px; margin-bottom:22px; box-shadow:var(--shadow); overflow:hidden;}
-.partner-hero-row{display:flex; align-items:center; gap:16px; margin-bottom:20px;}
-.partner-hero-logo{height:42px; width:auto; display:block;}
-.partner-hero-logo-sharks{height:58px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));}
-.partner-hero-x{font-family:var(--serif); font-size:24px; color:rgba(255,255,255,.55); font-weight:400;}
-.partner-hero-tag{display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#fff; background:rgba(255,255,255,.16); padding:4px 10px; border-radius:20px; margin-bottom:10px;}
-.partner-hero h2{font-family:var(--serif); font-size:25px; font-weight:700; color:#fff; margin:0 0 8px; max-width:640px; text-wrap:balance;}
-.partner-hero p{font-size:13.5px; color:rgba(255,255,255,.85); margin:0; max-width:560px;}
-.partner-compare{margin-bottom:26px;}
-.partner-compare-grid{display:flex; align-items:center; gap:14px; margin-top:12px;}
-.partner-compare-card{flex:1; border-radius:14px; padding:18px 20px; border:1px solid var(--line);}
-.partner-compare-card.real{background:var(--red-tint); border-color:color-mix(in srgb, var(--red) 30%, var(--line));}
-.partner-compare-card.mock{background:var(--teal-tint); border:1px dashed color-mix(in srgb, var(--teal) 45%, var(--line));}
-.partner-compare-tag{display:block; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-2); margin-bottom:8px;}
+/* Partnership tab — fixed rich-teal brand values on purpose (not the
+   theme-reactive --teal/--teal-deep tokens, which flip to pale pastel in
+   dark mode for text-accent use and washed out badly as a background fill). */
+.partner-hero{position:relative; background:radial-gradient(130% 160% at 12% -10%, rgba(120,205,224,.28), transparent 55%), linear-gradient(135deg, #04303C 0%, #0A5C70 55%, #0E7A94 100%); border:1px solid rgba(255,255,255,.09); border-radius:26px; padding:40px 38px 36px; margin-bottom:26px; box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 20px 46px rgba(4,25,30,.4); overflow:hidden;}
+.partner-hero-row{display:flex; align-items:center; gap:18px; margin-bottom:26px;}
+.partner-hero-logo{height:38px; width:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,.3));}
+.partner-hero-logo-sharks{height:58px;}
+.partner-hero-x{font-family:var(--serif); font-size:22px; color:rgba(255,255,255,.4); font-weight:400;}
+.partner-hero-tag{display:inline-flex; align-items:center; font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#fff; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); padding:6px 14px; border-radius:20px; margin-bottom:18px; box-shadow:inset 0 1px 0 rgba(255,255,255,.2);}
+.partner-hero h2{font-family:var(--serif); font-size:29px; font-weight:700; color:#fff; margin:0 0 12px; max-width:660px; line-height:1.28; text-wrap:balance;}
+.partner-hero p{font-size:14px; color:rgba(255,255,255,.82); margin:0; max-width:560px; line-height:1.6;}
+
+.partner-compare{margin-bottom:30px;}
+.partner-compare-grid{display:flex; align-items:stretch; gap:16px; margin-top:14px;}
+.partner-compare-card{flex:1; border-radius:20px; padding:5px;}
+.partner-compare-card.real{background:linear-gradient(160deg, color-mix(in srgb, var(--red) 50%, var(--line-soft)), var(--line-soft) 65%);}
+.partner-compare-card.mock{background:linear-gradient(160deg, color-mix(in srgb, var(--teal) 50%, var(--line-soft)), var(--line-soft) 65%);}
+.partner-compare-inner{background:var(--card); border-radius:16px; padding:22px 24px; height:100%; box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 1px 3px rgba(0,0,0,.12);}
+.partner-compare-card.mock .partner-compare-inner{border:1px dashed color-mix(in srgb, var(--teal) 45%, var(--line));}
+.partner-compare-tag{display:block; font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); margin-bottom:9px;}
 .partner-compare-tag.mock-tag{color:var(--teal-deep);}
 .partner-compare-metric{font-size:13px; font-weight:700; color:var(--ink); margin-bottom:4px;}
-.partner-compare-value{font-family:var(--serif); font-size:26px; font-weight:700; color:var(--ink);}
+.partner-compare-value{font-family:var(--serif); font-size:27px; font-weight:700; color:var(--ink);}
 .partner-compare-value small{font-size:13px; font-weight:500; color:var(--ink-2); margin-left:2px;}
-.partner-compare-note{font-size:11.5px; color:var(--ink-2); margin-top:8px; line-height:1.5;}
-.partner-compare-arrow{flex:0 0 auto; font-size:22px; color:var(--muted);}
-@media (max-width:700px){.partner-compare-grid{flex-direction:column;} .partner-compare-arrow{transform:rotate(90deg);}}
-.partner-icon{width:26px; height:26px; color:var(--teal-deep); margin-bottom:10px;}
-.partner-spark{width:100%; height:34px; display:block; margin-top:12px;}
-.partner-spark-label{font-size:10.5px; color:var(--muted); margin-top:4px; font-style:italic;}
-.partner-cta{background:var(--elevated); border:1px solid var(--line); border-radius:16px; padding:24px 28px; margin-top:22px; text-align:center;}
-.partner-cta-text{font-family:var(--serif); font-size:17px; font-weight:600; color:var(--ink); line-height:1.5; max-width:680px; margin:0 auto;}
-.partner-path{display:flex; align-items:flex-start; gap:0; margin:22px 0 4px;}
+.partner-compare-note{font-size:11.5px; color:var(--ink-2); margin-top:9px; line-height:1.5;}
+.partner-compare-arrow{flex:0 0 auto; align-self:center; width:36px; height:36px; border-radius:50%; background:var(--elevated); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--ink-2); box-shadow:var(--shadow);}
+@media (max-width:700px){.partner-compare-grid{flex-direction:column;} .partner-compare-arrow{transform:rotate(90deg); align-self:center;}}
+
+.partner-path{display:flex; align-items:flex-start; gap:0; margin:24px 0 4px; padding:22px 16px 18px; background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow);}
 .partner-path-step{flex:0 0 auto; display:flex; flex-direction:column; align-items:center; text-align:center; width:120px;}
-.partner-path-dot{width:14px; height:14px; border-radius:50%; background:var(--elevated); border:2px solid var(--line); margin-bottom:8px;}
-.partner-path-dot.done{background:var(--teal); border-color:var(--teal);}
+.partner-path-dot{width:14px; height:14px; border-radius:50%; background:var(--elevated); border:2px solid var(--line); margin-bottom:10px; transition:all .3s cubic-bezier(.32,.72,0,1);}
+.partner-path-dot.done{background:var(--teal-deep); border-color:var(--teal-deep); box-shadow:0 0 0 4px color-mix(in srgb, var(--teal) 22%, transparent);}
 .partner-path-label{font-size:11.5px; font-weight:700; color:var(--ink); line-height:1.4;}
 .partner-path-label span{display:block; font-weight:500; color:var(--muted); font-size:10.5px; margin-top:2px;}
-.partner-path-line{flex:1; height:2px; background:var(--line); margin-top:6px;}
-@media (max-width:700px){.partner-path{flex-wrap:wrap; gap:10px;} .partner-path-line{display:none;} .partner-path-step{width:auto;}}
-.partner-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin:14px 0 6px;}
+.partner-path-line{flex:1; height:2px; background:linear-gradient(90deg, var(--teal-deep), var(--line)); opacity:.45; margin-top:7px;}
+@media (max-width:700px){.partner-path{flex-wrap:wrap; gap:14px;} .partner-path-line{display:none;} .partner-path-step{width:auto;}}
+
+.partner-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin:14px 0 6px;}
 @media (max-width:700px){.partner-grid{grid-template-columns:1fr}}
-.partner-card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow);}
+.partner-card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px 22px 20px; box-shadow:0 1px 2px rgba(0,0,0,.05), 0 10px 22px rgba(0,0,0,.04); transition:transform .35s cubic-bezier(.32,.72,0,1), box-shadow .35s cubic-bezier(.32,.72,0,1);}
+.partner-card:hover{transform:translateY(-3px); box-shadow:0 1px 2px rgba(0,0,0,.07), 0 16px 30px rgba(0,0,0,.09);}
 .partner-card h4{font-family:var(--serif); font-size:15.5px; font-weight:700; margin:0 0 8px; color:var(--ink);}
 .partner-card p{font-size:13px; color:var(--ink-2); line-height:1.6; margin:0;}
+.partner-icon-chip{width:38px; height:38px; border-radius:12px; background:var(--teal-tint); display:flex; align-items:center; justify-content:center; margin-bottom:14px;}
+.partner-icon{width:19px; height:19px; color:var(--teal-deep);}
+.partner-spark{width:100%; height:34px; display:block; margin-top:12px;}
+.partner-spark-label{font-size:10.5px; color:var(--muted); margin-top:4px; font-style:italic;}
 .partner-tag{display:inline-block; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--teal-deep); background:var(--teal-tint); padding:3px 8px; border-radius:20px; margin-bottom:8px;}
+
+.partner-cta{position:relative; background:radial-gradient(120% 160% at 85% 110%, rgba(120,205,224,.22), transparent 55%), linear-gradient(135deg, #04303C, #0E7A94); border:1px solid rgba(255,255,255,.09); border-radius:22px; padding:32px 36px; margin-top:26px; text-align:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 20px 46px rgba(4,25,30,.35); overflow:hidden;}
+.partner-cta-text{font-family:var(--serif); font-size:19px; font-weight:600; color:#fff; line-height:1.55; max-width:680px; margin:0 auto;}
 .meth-block p, .meth-block li{font-size:13.5px; color:var(--ink-2); line-height:1.6;}
 .correction-box{background:var(--amber-tint); border:1px solid color-mix(in srgb, var(--amber) 30%, var(--line)); border-radius:10px; padding:14px 16px; font-size:13px; color:var(--ink-2);}
 .note-list{margin:8px 0 0; padding-left:18px;}
@@ -1058,7 +1069,7 @@ const PARTNER_ICONS = {
   camera: '<rect x="3" y="6.5" width="16" height="11" rx="1.8"/><path d="M8 6.5l1.4-2.2h3.2L14 6.5"/><circle cx="11" cy="12" r="3.2"/>',
 };
 function partnerIconHTML(name){
-  return `<svg class="partner-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${PARTNER_ICONS[name]}</svg>`;
+  return `<div class="partner-icon-chip"><svg class="partner-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${PARTNER_ICONS[name]}</svg></div>`;
 }
 
 // The "before" side is a real flagged finding already shown elsewhere in this
@@ -1083,17 +1094,21 @@ function partnershipHTML(){
       <div class="sec-label" style="margin-top:0;">The gap this capture already shows — and what closes it</div>
       <div class="partner-compare-grid">
         <div class="partner-compare-card real">
-          <span class="partner-compare-tag">What this capture shows today</span>
-          <div class="partner-compare-metric">Patellofemoral Force</div>
-          <div class="partner-compare-value">6.12<small>×BW</small></div>
-          <div class="partner-compare-note">Running-gait model${confidenceTagHTML('Low')} · not confirmed for skating</div>
+          <div class="partner-compare-inner">
+            <span class="partner-compare-tag">What this capture shows today</span>
+            <div class="partner-compare-metric">Patellofemoral Force</div>
+            <div class="partner-compare-value">6.12<small>×BW</small></div>
+            <div class="partner-compare-note">Running-gait model${confidenceTagHTML('Low')} · not confirmed for skating</div>
+          </div>
         </div>
         <div class="partner-compare-arrow">→</div>
         <div class="partner-compare-card mock">
-          <span class="partner-compare-tag mock-tag">Illustrative mockup — not real data</span>
-          <div class="partner-compare-metric">Knee Load, On-Ice Model</div>
-          <div class="partner-compare-value">— <small>skating-specific units</small></div>
-          <div class="partner-compare-note">Purpose-built for stride push-off &amp; crossover loading · not yet built</div>
+          <div class="partner-compare-inner">
+            <span class="partner-compare-tag mock-tag">Illustrative mockup — not real data</span>
+            <div class="partner-compare-metric">Knee Load, On-Ice Model</div>
+            <div class="partner-compare-value">— <small>skating-specific units</small></div>
+            <div class="partner-compare-note">Purpose-built for stride push-off &amp; crossover loading · not yet built</div>
+          </div>
         </div>
       </div>
     </div>
