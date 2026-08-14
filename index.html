@@ -266,8 +266,8 @@ p.lead{font-size:15.5px; color:var(--ink-2); max-width:70ch;}
 .partner-hero{position:relative; background:linear-gradient(135deg, var(--teal-deep), var(--teal)); border-radius:18px; padding:30px 30px 26px; margin-bottom:22px; box-shadow:var(--shadow); overflow:hidden;}
 .partner-hero-row{display:flex; align-items:center; gap:16px; margin-bottom:20px;}
 .partner-hero-logo{height:42px; width:auto; display:block;}
+.partner-hero-logo-sharks{height:58px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));}
 .partner-hero-x{font-family:var(--serif); font-size:24px; color:rgba(255,255,255,.55); font-weight:400;}
-.partner-hero-wordmark{font-size:16px; font-weight:800; letter-spacing:.04em; line-height:1.2; color:#fff;}
 .partner-hero-tag{display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#fff; background:rgba(255,255,255,.16); padding:4px 10px; border-radius:20px; margin-bottom:10px;}
 .partner-hero h2{font-family:var(--serif); font-size:25px; font-weight:700; color:#fff; margin:0 0 8px; max-width:640px; text-wrap:balance;}
 .partner-hero p{font-size:13.5px; color:rgba(255,255,255,.85); margin:0; max-width:560px;}
@@ -1070,9 +1070,9 @@ function partnershipHTML(){
   return `
     <div class="partner-hero">
       <div class="partner-hero-row">
-        <img src="couro_logo.png" alt="Couro" class="partner-hero-logo"/>
+        <img src="sharks_logo.svg" alt="San Jose Sharks" class="partner-hero-logo partner-hero-logo-sharks"/>
         <span class="partner-hero-x">×</span>
-        <span class="partner-hero-wordmark">SAN JOSE<br/>SHARKS</span>
+        <img src="couro_logo.png" alt="Couro" class="partner-hero-logo"/>
       </div>
       <span class="partner-hero-tag">What we could build together</span>
       <h2>One capture day, one phone camera, five real findings. This is the floor — not the ceiling.</h2>
