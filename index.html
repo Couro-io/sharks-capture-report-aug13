@@ -440,6 +440,17 @@ function fmtNum(v, unit){
   const n = Math.abs(v) >= 100 ? Math.round(v) : Math.round(v*10)/10;
   return n + (unit || '');
 }
+function escAttr(s){
+  return String(s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+// Metric title with a real explanation on hover — Couro's own real method_note
+// for this specific reading (how it was actually measured), not an invented
+// plain-language gloss. If this particular reading has no method_note, falls
+// back to the plain label with no tooltip rather than showing an empty one.
+function metricLabelHTML(key, m){
+  const txt = label(key);
+  return m && m.method_note ? `<span title="${escAttr(m.method_note)}">${txt}</span>` : txt;
+}
 
 // Every gauge-bearing metric key that appears anywhere in this view's clips —
 // discovered from the real data, not a hardcoded list. shin_angle is dropped for
@@ -577,7 +588,7 @@ function slrCardHTML(kind, player, picks){
   if (!picks.length) return `<div class="slr-card ${kind}"><h4>${titleMap[kind]}</h4><div class="empty">No metric in this tier for this player.</div></div>`;
   const items = picks.map(x => {
     const g = x.w.m.gauge;
-    return `<div class="mname" onclick="document.getElementById('metric-${player.id}-${x.k}')?.scrollIntoView({behavior:'smooth',block:'center'})">${label(x.k)}${regionTagHTML(player.view, x.k)}</div>
+    return `<div class="mname" onclick="document.getElementById('metric-${player.id}-${x.k}')?.scrollIntoView({behavior:'smooth',block:'center'})">${metricLabelHTML(x.k, x.w.m)}${regionTagHTML(player.view, x.k)}</div>
       <div class="mdesc">${fmtNum(g.value,g.unit)} real value · target ${fmtNum(g.target,g.unit)}${loadTagHTML(x.family)}${confidenceTagHTML(x.w.m.confidence)}</div>`;
   }).join('<div style="height:10px"></div>');
   return `<div class="slr-card ${kind}"><h4>${titleMap[kind]}</h4>${items}</div>`;
@@ -611,7 +622,7 @@ function verdictCardHTML(player){
   const showDriver = (v.counts.red > 0 || v.counts.yellow > 0) && d;
   const driverTag = showDriver ? loadTagHTML(metricFamily(d.w.m)) : '';
   const driverLine = showDriver
-    ? `Driven by ${RADAR_LABELS[d.zone]}'s ${label(d.w.key)} — ${fmtNum(d.w.m.gauge.value, d.w.m.gauge.unit)} vs target ${fmtNum(d.w.m.gauge.target, d.w.m.gauge.unit)}${driverTag ? `<span style="display:inline-block; margin-left:6px; vertical-align:middle;">${driverTag}</span>` : ''}`
+    ? `Driven by ${RADAR_LABELS[d.zone]}'s ${metricLabelHTML(d.w.key, d.w.m)} — ${fmtNum(d.w.m.gauge.value, d.w.m.gauge.unit)} vs target ${fmtNum(d.w.m.gauge.target, d.w.m.gauge.unit)}${driverTag ? `<span style="display:inline-block; margin-left:6px; vertical-align:middle;">${driverTag}</span>` : ''}`
     : '';
   return `
     <div class="verdict-card">
@@ -655,7 +666,7 @@ function asymDominanceSummaryHTML(player){
     const g = r.w.m.gauge, a = r.w.m.asymmetry;
     const tag = loadTagHTML(metricFamily(r.w.m));
     return `<div class="asymsum-ex" onclick="document.getElementById('metric-${player.id}-${r.k}')?.scrollIntoView({behavior:'smooth',block:'center'})">
-      <span class="asymsum-name">${label(r.k)}${tag ? `<span style="display:inline-block; margin-left:6px; vertical-align:middle;">${tag}</span>` : ''}</span>
+      <span class="asymsum-name">${metricLabelHTML(r.k, r.w.m)}${tag ? `<span style="display:inline-block; margin-left:6px; vertical-align:middle;">${tag}</span>` : ''}</span>
       <span class="asymsum-nums">L ${fmtNum(a.left,g.unit)} · R ${fmtNum(a.right,g.unit)}${r.flagged ? ' <span class="conf-tag" style="margin-left:2px;">Flagged</span>' : ''}</span>
     </div>`;
   }).join('');
@@ -727,7 +738,7 @@ function bodyMapHTML(player){
     if (!w) return `<div><b><span class="bm-dot" style="background:${color};"></span>${rlabel}</b> — not captured from this camera angle</div>`;
     const zl = (w.m.gauge.current_zone||{}).label || '';
     const tag = loadTagHTML(metricFamily(w.m));
-    return `<div><b><span class="bm-dot" style="background:${color};"></span>${rlabel}</b> — ${label(w.key)}: ${fmtNum(w.m.gauge.value,w.m.gauge.unit)} (${zl})${tag ? `<span style="display:inline-block; margin-left:6px; vertical-align:middle;">${tag}</span>` : ''}
+    return `<div><b><span class="bm-dot" style="background:${color};"></span>${rlabel}</b> — ${metricLabelHTML(w.key, w.m)}: ${fmtNum(w.m.gauge.value,w.m.gauge.unit)} (${zl})${tag ? `<span style="display:inline-block; margin-left:6px; vertical-align:middle;">${tag}</span>` : ''}
       <span class="bm-row-sub">tap the figure or <a href="#" onclick="event.preventDefault(); document.getElementById('metric-${player.id}-${w.key}')?.scrollIntoView({behavior:'smooth',block:'center'})">jump to the real evidence photo</a></span>
     </div>`;
   };
@@ -836,7 +847,7 @@ function spotlightCardHTML(player, x, opts){
       <div class="spotlight-body">
         ${opts.showPlayer ? `<div class="spotlight-player" onclick="showTab('${player.id}')">${jerseyTxt} <span>${player.view==='back'?'Back view':'Side view'}</span></div>` : ''}
         <div class="mhead">
-          <span class="mtitle">${opts.featured ? '<span class="conf-tag" style="color:var(--teal-deep);background:var(--teal-tint);">Signature clip</span> ' : ''}${label(key)}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(family)}${confidenceTagHTML(w.m.confidence)}</span>
+          <span class="mtitle">${opts.featured ? '<span class="conf-tag" style="color:var(--teal-deep);background:var(--teal-tint);">Signature clip</span> ' : ''}${metricLabelHTML(key, w.m)}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(family)}${confidenceTagHTML(w.m.confidence)}</span>
         </div>
         ${gaugeBarHTML(g)}
         ${asymHTML(w)}
@@ -866,7 +877,7 @@ function compactMetricRowHTML(player, x){
   return `
     <div class="metric-block" id="metric-${player.id}-${key}">
       <div class="mhead">
-        <span class="mtitle">${label(key)}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(metricFamily(w.m))}${confidenceTagHTML(w.m.confidence)}</span>
+        <span class="mtitle">${metricLabelHTML(key, w.m)}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(metricFamily(w.m))}${confidenceTagHTML(w.m.confidence)}</span>
         <span class="magg">
           ${photoLinks}
           Worst of ${otherClipsN} clip${otherClipsN===1?'':'s'} · clip ${w.session_id}
@@ -968,8 +979,8 @@ function playerTabHTML(player){
         </div>
       </div>
       <div>
-        <div class="sec-label" style="margin-top:0;">A focused look — hip, knee, ankle</div>
-        <p class="lead" style="font-size:13px;">These 3 regions are Couro's pre-selected focus, tied to the Sharks' own injury history — not automatically whichever regions scored worst in this capture (shoulder and trunk are tracked too; see the verdict card above for all 5). Within each region below, the specific finding shown is this player's real worst measured reading. Tap any zone for its evidence photo.</p>
+        <div class="sec-label" style="margin-top:0;">Injury-Risk Focus — Hip · Knee · Ankle<span style="display:inline-block; margin-left:6px; width:14px; height:14px; line-height:14px; border-radius:50%; background:var(--gold-tint); color:var(--gold-deep); font-size:10px; text-align:center; text-transform:none; letter-spacing:normal; font-weight:700; cursor:help; vertical-align:middle;" title="Couro's pre-selected focus, tied to the Sharks' own injury history — not automatically whichever regions scored worst in this capture. Shoulder and trunk are tracked too; see the verdict card above for all 5.">i</span></div>
+        <p class="lead" style="font-size:13px;">Couro's three highest-value regions for skater injury history. The finding shown in each region below is this player's real worst measured reading — tap any zone for its evidence photo.</p>
         ${bodyMapHTML(player)}
       </div>
     </div>
