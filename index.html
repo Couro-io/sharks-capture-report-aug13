@@ -256,6 +256,12 @@ p.lead{font-size:15.5px; color:var(--ink-2); max-width:70ch;}
 .shead{font-size:11.5px; font-weight:700;}
 
 .meth-block{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); margin-bottom:18px;}
+.partner-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin:14px 0 6px;}
+@media (max-width:700px){.partner-grid{grid-template-columns:1fr}}
+.partner-card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow);}
+.partner-card h4{font-family:var(--serif); font-size:15.5px; font-weight:700; margin:0 0 8px; color:var(--ink);}
+.partner-card p{font-size:13px; color:var(--ink-2); line-height:1.6; margin:0;}
+.partner-tag{display:inline-block; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--teal-deep); background:var(--teal-tint); padding:3px 8px; border-radius:20px; margin-bottom:8px;}
 .meth-block p, .meth-block li{font-size:13.5px; color:var(--ink-2); line-height:1.6;}
 .correction-box{background:var(--amber-tint); border:1px solid color-mix(in srgb, var(--amber) 30%, var(--line)); border-radius:10px; padding:14px 16px; font-size:13px; color:var(--ink-2);}
 .note-list{margin:8px 0 0; padding-left:18px;}
@@ -997,6 +1003,57 @@ function overviewHTML(){
   `;
 }
 
+// Forward-looking only — no pricing, no invented performance claims. Every
+// card below is grounded in a real, disclosed limitation elsewhere in this
+// report (the running-gait load model, single capture day, population-only
+// targets) so this reads as "here's what solves what you just saw," not
+// generic sales copy.
+function partnershipHTML(){
+  return `
+    <div class="hook">
+      <span class="tag-hook">What we could build together</span>
+      <h2>This capture is a proof of concept. Here's what a real Sharks partnership could add — no pricing, just what's technically possible.</h2>
+    </div>
+
+    <div class="partner-grid">
+      <div class="partner-card">
+        <span class="partner-tag">Sport-specific model</span>
+        <h4>Hockey-native movement metrics</h4>
+        <p>Every force-unit metric in this report (hip/shoulder load, patellofemoral force) runs on a running-gait model — flagged throughout as an estimate, not confirmed for skating. A hockey-specific capture and modeling pass would replace that with real skating mechanics: stride push-off, crossover mechanics, edge angles, stopping and pivot loads.</p>
+      </div>
+      <div class="partner-card">
+        <span class="partner-tag">Individual baseline</span>
+        <h4>A movement signature that sharpens with every capture</h4>
+        <p>Every number in this report compares a skater to Couro's population target band. With repeated captures per player over a season, Couro can baseline each skater against their own history — catching a real deviation from their own normal that a population band alone would miss.</p>
+      </div>
+      <div class="partner-card">
+        <span class="partner-tag">Longitudinal tracking</span>
+        <h4>Full-roster, season-long trend</h4>
+        <p>This report is one day, five skaters. A standing capture cadence — built into practice or game-day video you already collect — could cover the full roster and show real trend over a season, not just a single-day snapshot.</p>
+      </div>
+      <div class="partner-card">
+        <span class="partner-tag">Integration</span>
+        <h4>Contextualized with your existing tech stack</h4>
+        <p>A Couro finding is more useful sitting next to the data your staff already trusts. We can work toward integrating with force plates, wearables, ice-tracking systems, and your medical/training records so movement findings show up in context, not in an isolated report.</p>
+      </div>
+      <div class="partner-card">
+        <span class="partner-tag">Research partnership</span>
+        <h4>Hockey-grounded injury-risk thresholds</h4>
+        <p>The risk framing in this report leans on general biomechanics literature. Working directly with your medical and performance staff, we can ground thresholds in the Sharks' own injury history and hockey-specific research — same approach already behind this report's top-3 injury-region body map.</p>
+      </div>
+      <div class="partner-card">
+        <span class="partner-tag">Single camera, always</span>
+        <h4>Still just one phone, no new equipment</h4>
+        <p>Everything above builds on Couro's core model: one phone camera, not a multi-camera rig your staff has to manage. Whatever we add — hockey-specific metrics, longitudinal tracking, integrations — the capture workflow your staff sees stays this simple.</p>
+      </div>
+    </div>
+
+    <div class="meth-block" style="margin-top:20px;">
+      <p style="margin:0; font-size:13px; color:var(--ink-2);">This page is intentionally light on specifics — no pricing, no committed timeline. It's meant to start a conversation about what's technically possible, grounded in what this capture already showed is real and working.</p>
+    </div>
+  `;
+}
+
 function methodologyHTML(){
   return `
     <div class="hook"><span class="tag-hook">Read this before the numbers</span><h2>Where this data comes from, and how identity was confirmed.</h2></div>
@@ -1036,6 +1093,16 @@ function methodologyHTML(){
       <div class="sec-label">What the evidence photos are</div>
       <p>Every flagged metric ships with Couro's own annotated frame — the real pose overlay, drawn directly on the real captured frame, showing exactly how that number was measured. Tap any evidence photo to enlarge it.</p>
     </div>
+
+    <div class="meth-block">
+      <div class="sec-label">How the 5-region status grid and verdict tally work</div>
+      <p>Every player page and roster comparison tracks the same 5 body regions — hip/groin, knee, ankle, shoulder, trunk. For each region we take that player's single worst real metric reading (by Couro's own zone severity, then injury-risk score as a tiebreak) and use its real zone color. The roster table's fill bar is that metric's real position on Couro's own min–max scale, not a fixed bucket, so two players both flagged "Out" don't render identically if their real numbers differ. The verdict card's "X of 5 regions outside target" headline is a direct count of these real zone calls — not a separate score we invented for this report.</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="sec-label">How left/right dominance is calculated</div>
+      <p>Where a metric carries real left and right values from the pipeline — roughly 40% of tracked metric readings in this capture (129 of 330) — we compare the two raw magnitudes directly; the larger one is "dominant" for that metric. A player's overall dominance summary is a majority count across all their asymmetry-tracked metrics, not a weighted score. "Flagged" only appears when the real gap between left and right crosses Couro's own flag_threshold for that specific metric, the same threshold used in the live product. Dominance is a magnitude read, not a judgment about which side is better — for some metrics a higher reading is the concern, for others a lower one is, and this report doesn't collapse that distinction into a single verdict.</p>
+    </div>
   `;
 }
 
@@ -1046,6 +1113,7 @@ function buildNav(){
     const t = p.jersey ? ('#'+p.jersey) : p.label.replace(/ \(.*\)/,'').replace('Side ','');
     html += `<button data-tab="${p.id}" onclick="showTab('${p.id}')">${t}</button>`;
   });
+  html += `<button data-tab="partnership" onclick="showTab('partnership')">Partnership</button>`;
   html += `<button data-tab="methodology" onclick="showTab('methodology')">Methodology</button>`;
   nav.innerHTML = html;
 }
@@ -1085,6 +1153,7 @@ function boot(){
   const views = document.getElementById('views');
   let html = `<section class="view active" id="view-overview">${overviewHTML()}</section>`;
   PLAYERS.forEach(p => { html += `<section class="view" id="view-${p.id}">${playerTabHTML(p)}</section>`; });
+  html += `<section class="view" id="view-partnership">${partnershipHTML()}</section>`;
   html += `<section class="view" id="view-methodology">${methodologyHTML()}</section>`;
   views.innerHTML = html;
   const validIds = ['overview', ...PLAYERS.map(p=>p.id), 'methodology'];
