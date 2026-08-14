@@ -911,18 +911,6 @@ function confidenceTagHTML(confidence){
   return confidence === 'Low' ? '<span class="conf-tag" title="Couro\'s own pipeline flagged this specific reading as low confidence — treat the value and its evidence frame as a rough estimate, not a precise measurement.">Low-confidence reading</span>' : '';
 }
 
-// Small inline badge for player-page identity confidence — replaces a full-width
-// hook card so the first thing a reader sees is the video/findings, not internal
-// QA language. Full detail (how each identity was actually confirmed) stays on
-// the Methodology tab; this badge's tooltip carries the real explanation text.
-function idConfidenceBadgeHTML(idConfidence){
-  const m = idConfidence.match(/^(.*?)\s[-—]\s(.*)$/s);
-  const lead = (m ? m[1] : idConfidence).trim();
-  const short = /^confirmed/i.test(lead) ? 'Staff-confirmed ID' : `${lead} confidence ID`;
-  const esc = idConfidence.replace(/"/g, '&quot;');
-  return `<span class="conf-tag" style="margin-left:10px; display:inline-block; vertical-align:middle; text-transform:none; letter-spacing:normal; font-size:10.5px;" title="${esc}">${short}</span>`;
-}
-
 // Red-zone-first, then Medium/High confidence before Low within the same zone
 // so a shaky single-clip estimate doesn't out-rank a well-measured finding,
 // then by injury_risk.
@@ -968,7 +956,7 @@ function playerTabHTML(player){
   `).join('');
   const jerseyTxt = player.jersey ? `Jersey #${player.jersey}` : player.label.replace(/ \(.*\)/,'');
   return `
-    <p class="eyebrow" style="margin-bottom:14px;">${jerseyTxt} · ${player.view === 'back' ? 'Back view' : 'Side view'} · ${player.n_clips} clip${player.n_clips===1?'':'s'} captured${idConfidenceBadgeHTML(player.id_confidence)}</p>
+    <p class="eyebrow" style="margin-bottom:14px;">${jerseyTxt} · ${player.view === 'back' ? 'Back view' : 'Side view'} · ${player.n_clips} clip${player.n_clips===1?'':'s'} captured</p>
 
     <div class="player-head" style="${player.view === 'side' ? 'grid-template-columns:1fr 1fr;' : ''}">
       <div>
