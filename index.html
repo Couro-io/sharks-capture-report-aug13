@@ -537,6 +537,20 @@ function verdictFor(player){
 // coherent read. Every clause is computed directly from real per-metric data
 // (asymmetry side, zone color, metric family, confidence) — the pattern is
 // real, only the sentence connecting the facts is written.
+// hip_adductor_load and hip_abductor_load carry an exactly identical real
+// value on every clip checked (confirmed via direct comparison, not assumed
+// from the metric name) — one derived quantity duplicated under two names.
+// Checked here at render time, per player, so if a future capture ever has
+// them genuinely differ, both still show; nothing is hidden by assumption.
+function dedupeLoadDuplicates(picks){
+  const add = picks.find(x => x.k === 'hip_adductor_load');
+  const abd = picks.find(x => x.k === 'hip_abductor_load');
+  if (add && abd && Math.abs(add.w.m.gauge.value - abd.w.m.gauge.value) < 0.01){
+    return picks.filter(x => x.k !== 'hip_abductor_load');
+  }
+  return picks;
+}
+
 // Real strength / limiter / risk split, straight from Couro's own zone calls —
 // no invented score. Kinematic (angle/geometry) metrics are preferred within
 // each tier since they don't depend on the running-specific load model, and a
@@ -544,7 +558,7 @@ function verdictFor(player){
 // single shaky estimate doesn't take the featured slot over a well-measured one.
 function slrPicksFor(player){
   const allKeys = allGaugeMetricsFor(player.view);
-  const picks = allKeys.map(k => ({k, w: pickWorst(player,k)})).filter(x => x.w);
+  const picks = dedupeLoadDuplicates(allKeys.map(k => ({k, w: pickWorst(player,k)})).filter(x => x.w));
   picks.forEach(x => { x.family = metricFamily(x.w.m.gauge.unit); });
   const byColor = c => picks.filter(x => (x.w.m.gauge.current_zone||{}).color === c);
   const sortPref = arr => arr.slice().sort((a,b) =>
@@ -898,7 +912,7 @@ function idConfidenceBadgeHTML(idConfidence){
 // then by injury_risk.
 function rankedMetricsFor(player){
   const allKeys = allGaugeMetricsFor(player.view);
-  return allKeys.map(k => ({k, w: pickWorst(player,k)})).filter(x => x.w)
+  return dedupeLoadDuplicates(allKeys.map(k => ({k, w: pickWorst(player,k)})).filter(x => x.w))
     .sort((a,b) => b.w.rank - a.w.rank
       || (CONFIDENCE_RANK[b.w.m.confidence] ?? 1) - (CONFIDENCE_RANK[a.w.m.confidence] ?? 1)
       || b.w.risk - a.w.risk);
@@ -950,8 +964,8 @@ function playerTabHTML(player){
         </div>
       </div>
       <div>
-        <div class="sec-label" style="margin-top:0;">Where the risk is — Sharks' top-3 injury regions</div>
-        <p class="lead" style="font-size:13px;">Hip/groin, knee, and ankle — the regions the Sharks' own injury history flags most. Tap any zone for its evidence photo.</p>
+        <div class="sec-label" style="margin-top:0;">A focused look — hip, knee, ankle</div>
+        <p class="lead" style="font-size:13px;">These 3 regions are Couro's pre-selected focus, tied to the Sharks' own injury history — not automatically whichever regions scored worst in this capture (shoulder and trunk are tracked too; see the verdict card above for all 5). Within each region below, the specific finding shown is this player's real worst measured reading. Tap any zone for its evidence photo.</p>
         ${bodyMapHTML(player)}
       </div>
     </div>
