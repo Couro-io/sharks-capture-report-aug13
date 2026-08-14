@@ -4,6 +4,13 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Sharks On-Ice Capture — Aug 13</title>
+<meta property="og:title" content="San Jose Sharks — On-Ice Capture Report"/>
+<meta property="og:description" content="Five skaters, 20 clips, real Couro production pipeline output — biomechanics capture report and partnership overview."/>
+<meta property="og:image" content="https://couro-io.github.io/sharks-capture-report-aug13/couro_logo.png"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="San Jose Sharks — On-Ice Capture Report"/>
+<meta name="twitter:image" content="https://couro-io.github.io/sharks-capture-report-aug13/couro_logo.png"/>
 <style>
 :root{
   --cream:#FFF9EC; --card:#FFFFFF; --elevated:#FFF5D6; --line:#EDE4CE; --line-soft:#F3ECDA;
@@ -256,6 +263,18 @@ p.lead{font-size:15.5px; color:var(--ink-2); max-width:70ch;}
 .shead{font-size:11.5px; font-weight:700;}
 
 .meth-block{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); margin-bottom:18px;}
+.partner-cobrand{display:flex; align-items:center; justify-content:center; gap:22px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:26px 20px; box-shadow:var(--shadow); margin-bottom:20px;}
+.partner-cobrand-logo{height:52px; width:auto; display:block;}
+.partner-cobrand-x{font-family:var(--serif); font-size:28px; color:var(--muted); font-weight:400;}
+.partner-cobrand-wordmark{font-size:20px; font-weight:800; letter-spacing:.04em; line-height:1.15; color:var(--teal-deep); text-align:left;}
+.partner-path{display:flex; align-items:flex-start; gap:0; margin:22px 0 4px;}
+.partner-path-step{flex:0 0 auto; display:flex; flex-direction:column; align-items:center; text-align:center; width:120px;}
+.partner-path-dot{width:14px; height:14px; border-radius:50%; background:var(--elevated); border:2px solid var(--line); margin-bottom:8px;}
+.partner-path-dot.done{background:var(--teal); border-color:var(--teal);}
+.partner-path-label{font-size:11.5px; font-weight:700; color:var(--ink); line-height:1.4;}
+.partner-path-label span{display:block; font-weight:500; color:var(--muted); font-size:10.5px; margin-top:2px;}
+.partner-path-line{flex:1; height:2px; background:var(--line); margin-top:6px;}
+@media (max-width:700px){.partner-path{flex-wrap:wrap; gap:10px;} .partner-path-line{display:none;} .partner-path-step{width:auto;}}
 .partner-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin:14px 0 6px;}
 @media (max-width:700px){.partner-grid{grid-template-columns:1fr}}
 .partner-card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow);}
@@ -1010,10 +1029,39 @@ function overviewHTML(){
 // generic sales copy.
 function partnershipHTML(){
   return `
+    <div class="partner-cobrand">
+      <img src="couro_logo.png" alt="Couro" class="partner-cobrand-logo"/>
+      <span class="partner-cobrand-x">×</span>
+      <span class="partner-cobrand-wordmark">SAN JOSE<br/>SHARKS</span>
+    </div>
+
     <div class="hook">
       <span class="tag-hook">What we could build together</span>
       <h2>This capture is a proof of concept. Here's what a real Sharks partnership could add — no pricing, just what's technically possible.</h2>
     </div>
+
+    <div class="partner-path">
+      <div class="partner-path-step">
+        <div class="partner-path-dot done"></div>
+        <div class="partner-path-label">This capture<br/><span>Proof of concept</span></div>
+      </div>
+      <div class="partner-path-line"></div>
+      <div class="partner-path-step">
+        <div class="partner-path-dot"></div>
+        <div class="partner-path-label">Hockey-specific model<br/><span>+ individual baselines</span></div>
+      </div>
+      <div class="partner-path-line"></div>
+      <div class="partner-path-step">
+        <div class="partner-path-dot"></div>
+        <div class="partner-path-label">Full roster<br/><span>+ season-long tracking</span></div>
+      </div>
+      <div class="partner-path-line"></div>
+      <div class="partner-path-step">
+        <div class="partner-path-dot"></div>
+        <div class="partner-path-label">Integrated<br/><span>with your existing stack</span></div>
+      </div>
+    </div>
+    <p class="lead" style="font-size:12px; margin-top:6px;">Illustrative order, not a committed timeline — where this could go if we keep building.</p>
 
     <div class="partner-grid">
       <div class="partner-card">
@@ -1046,10 +1094,6 @@ function partnershipHTML(){
         <h4>Still just one phone, no new equipment</h4>
         <p>Everything above builds on Couro's core model: one phone camera, not a multi-camera rig your staff has to manage. Whatever we add — hockey-specific metrics, longitudinal tracking, integrations — the capture workflow your staff sees stays this simple.</p>
       </div>
-    </div>
-
-    <div class="meth-block" style="margin-top:20px;">
-      <p style="margin:0; font-size:13px; color:var(--ink-2);">This page is intentionally light on specifics — no pricing, no committed timeline. It's meant to start a conversation about what's technically possible, grounded in what this capture already showed is real and working.</p>
     </div>
   `;
 }
