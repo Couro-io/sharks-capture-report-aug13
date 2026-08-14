@@ -471,15 +471,14 @@ function explainPanelHTML(id, text){
 }
 // One consolidated, real explanation per reading: how it was measured
 // (method_note) plus any real caveat that specifically applies to THIS
-// reading (load/proxy model, low confidence) — each line only appears if
-// the real per-reading data actually supports it, nothing invented.
+// reading (load/proxy model) — each line only appears if the real
+// per-reading data actually supports it, nothing invented.
 function explainTextFor(m){
   const parts = [];
   if (m.method_note) parts.push(m.method_note);
   const fam = metricFamily(m);
   if (fam === 'load') parts.push('This is a video-only estimate from a running-gait force model — not confirmed for skating.');
   if (fam === 'proxy') parts.push('This is a derived model estimate (index/proxy), not a direct force measurement.');
-  if (m.confidence === 'Low') parts.push("Couro's own pipeline flagged this specific reading as low confidence — treat it as directional.");
   return parts.join(' ');
 }
 // Metric title with a real explanation, tap to reveal — Couro's own real
@@ -636,7 +635,7 @@ function slrCardHTML(kind, player, picks){
   const items = picks.map(x => {
     const g = x.w.m.gauge;
     return `<div class="mname" onclick="document.getElementById('metric-${player.id}-${x.k}')?.scrollIntoView({behavior:'smooth',block:'center'})">${metricLabelHTML(x.k, x.w.m)}${regionTagHTML(player.view, x.k)}</div>
-      <div class="mdesc">${fmtNum(g.value,g.unit)} real value · target ${fmtNum(g.target,g.unit)}${loadTagHTML(x.family)}${confidenceTagHTML(x.w.m.confidence)}</div>`;
+      <div class="mdesc">${fmtNum(g.value,g.unit)} real value · target ${fmtNum(g.target,g.unit)}${loadTagHTML(x.family)}</div>`;
   }).join('<div style="height:10px"></div>');
   return `<div class="slr-card ${kind}"><h4>${titleMap[kind]}</h4>${items}</div>`;
 }
@@ -884,12 +883,10 @@ function spotlightCardHTML(player, x, opts){
   const why = isTop ? (w.m.why || w.m.headline || '') : (w.m.cta_subtitle || w.m.why || w.m.headline || '');
   const hasPhoto = !!w.m.evidence_file;
   const jerseyTxt = player.jersey ? `#${player.jersey}` : player.label.replace(/ \(.*\)/,'');
-  const lowConf = w.m.confidence === 'Low';
   const altPhoto = (hasPhoto && !isSplitPhoto(w.m.evidence_file)) ? altSplitPhotoFor(player, key) : null;
   const photoFile = altPhoto ? altPhoto.file : w.m.evidence_file;
   let photoCaption = '';
   if (altPhoto) photoCaption = `Technique reference photo from a different, in-range clip (${fmtNum(altPhoto.value, altPhoto.unit)}, ${altPhoto.zoneLabel}) — not this flagged clip. <a href="#" onclick="event.preventDefault(); event.stopPropagation(); openLightbox('${w.m.evidence_file}')">View the flagged clip's own frame →</a>`;
-  else if (lowConf) photoCaption = 'Low-confidence frame — may not land on a representative moment';
   return `
     <div class="spotlight-card" id="${opts.anchorId ? `metric-${player.id}-${key}` : ''}">
       ${hasPhoto
@@ -898,7 +895,7 @@ function spotlightCardHTML(player, x, opts){
       <div class="spotlight-body">
         ${opts.showPlayer ? `<div class="spotlight-player" onclick="showTab('${player.id}')">${jerseyTxt} <span>${player.view==='back'?'Back view':'Side view'}</span></div>` : ''}
         <div class="mhead">
-          <span class="mtitle">${opts.featured ? '<span class="conf-tag" style="color:var(--teal-deep);background:var(--teal-tint);">Signature clip</span> ' : ''}${titleHTML}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(family)}${confidenceTagHTML(w.m.confidence)}</span>
+          <span class="mtitle">${opts.featured ? '<span class="conf-tag" style="color:var(--teal-deep);background:var(--teal-tint);">Signature clip</span> ' : ''}${titleHTML}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(family)}</span>
         </div>
         ${gaugeBarHTML(g, explainId)}
         ${explainId ? explainPanelHTML(explainId, explainText) : ''}
@@ -933,7 +930,7 @@ function compactMetricRowHTML(player, x){
   return `
     <div class="metric-block" id="metric-${player.id}-${key}">
       <div class="mhead">
-        <span class="mtitle">${titleHTML}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(metricFamily(w.m))}${confidenceTagHTML(w.m.confidence)}</span>
+        <span class="mtitle">${titleHTML}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(metricFamily(w.m))}</span>
         <span class="magg">
           ${photoLinks}
           Worst of ${otherClipsN} clip${otherClipsN===1?'':'s'} · clip ${w.session_id}
@@ -969,14 +966,6 @@ function loadTagHTML(family){
   if (family === 'load') return '<span class="load-tag" title="This metric estimates force from a video-only running-gait model (touchdown/toe-off, ground reaction force). Not confirmed for skating.">Load estimate · running-derived model</span>';
   if (family === 'proxy') return '<span class="load-tag" title="Couro\'s own method note for this reading: not a direct force measurement, a derived proxy/index.">Model estimate · not directly measured</span>';
   return '';
-}
-
-// Couro's own confidence call for this specific reading, not something we're
-// inferring — shown only for Low so it doesn't clutter the ~85% of readings
-// that are Medium/High. A Low tag means treat the number as directional, and
-// that the single evidence photo may not land on a clean, representative frame.
-function confidenceTagHTML(confidence){
-  return confidence === 'Low' ? '<span class="conf-tag" title="Couro\'s own pipeline flagged this specific reading as low confidence — treat the value and its evidence frame as a rough estimate, not a precise measurement.">Low-confidence reading</span>' : '';
 }
 
 // Red-zone-first, then Medium/High confidence before Low within the same zone
@@ -1202,7 +1191,7 @@ function partnershipHTML(){
             <span class="partner-compare-tag">Today — running-gait model</span>
             <div class="partner-compare-metric">Patellofemoral Force</div>
             <div class="partner-compare-value">6.12<small>×BW</small></div>
-            <div class="partner-compare-note">${confidenceTagHTML('Low')} Borrowed from running mechanics · not confirmed for skating</div>
+            <div class="partner-compare-note">Borrowed from running mechanics · not confirmed for skating</div>
           </div>
         </div>
         <div class="partner-compare-arrow">→</div>
