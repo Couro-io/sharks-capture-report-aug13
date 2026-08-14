@@ -181,6 +181,12 @@ p.lead{font-size:15.5px; color:var(--ink-2); max-width:70ch;}
 .mtitle .conf-tag{display:inline-block; margin-top:0; margin-left:6px; vertical-align:middle;}
 .photo-caveat{font-size:10px; font-weight:600; color:var(--ink-2); background:var(--elevated); padding:4px 8px; letter-spacing:.02em; text-align:center;}
 
+/* tap-to-reveal explanations (no hover on touch devices) */
+.explain-trigger{cursor:pointer; -webkit-tap-highlight-color:transparent; text-decoration:underline; text-decoration-style:dotted; text-decoration-color:var(--muted); text-underline-offset:3px;}
+.explain-panel{max-height:0; overflow:hidden; opacity:0; transition:max-height .28s cubic-bezier(.4,0,.2,1), opacity .2s;}
+.explain-panel.open{max-height:400px; opacity:1;}
+.explain-panel-inner{font-size:12px; line-height:1.55; color:var(--ink-2); background:var(--elevated); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-top:8px;}
+
 /* gauge bar (real Couro target zones) */
 .gauge-bar-wrap{margin:10px 0 4px;}
 .gauge-bar-track{position:relative; height:14px; border-radius:7px; overflow:hidden; background:var(--line-soft); border:1px solid var(--line);}
@@ -443,13 +449,49 @@ function fmtNum(v, unit){
 function escAttr(s){
   return String(s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
-// Metric title with a real explanation on hover — Couro's own real method_note
-// for this specific reading (how it was actually measured), not an invented
-// plain-language gloss. If this particular reading has no method_note, falls
-// back to the plain label with no tooltip rather than showing an empty one.
+function escHTML(s){
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+// Tap-to-reveal, not hover — title= tooltips don't work on touch devices,
+// and this report is mostly read on a phone or tablet. Every explanation
+// on the page shares this one trigger+panel pattern and a global id counter
+// so ids never collide even when the same metric/player renders in more
+// than one place on the page (e.g. a player's own tab and the Overview
+// roster spotlight).
+let explainSeq = 0;
+function toggleExplain(id){
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+function explainTriggerAttrs(id){
+  return `class="explain-trigger" onclick="event.stopPropagation(); toggleExplain('${id}')"`;
+}
+function explainPanelHTML(id, text){
+  return text ? `<div class="explain-panel" id="${id}"><div class="explain-panel-inner">${escHTML(text)}</div></div>` : '';
+}
+// One consolidated, real explanation per reading: how it was measured
+// (method_note) plus any real caveat that specifically applies to THIS
+// reading (load/proxy model, low confidence) — each line only appears if
+// the real per-reading data actually supports it, nothing invented.
+function explainTextFor(m){
+  const parts = [];
+  if (m.method_note) parts.push(m.method_note);
+  const fam = metricFamily(m);
+  if (fam === 'load') parts.push('This is a video-only estimate from a running-gait force model — not confirmed for skating.');
+  if (fam === 'proxy') parts.push('This is a derived model estimate (index/proxy), not a direct force measurement.');
+  if (m.confidence === 'Low') parts.push("Couro's own pipeline flagged this specific reading as low confidence — treat it as directional.");
+  return parts.join(' ');
+}
+// Metric title with a real explanation, tap to reveal — Couro's own real
+// method_note for this specific reading (how it was actually measured), not
+// an invented plain-language gloss. If this particular reading has no
+// method_note, falls back to the plain label with no trigger.
 function metricLabelHTML(key, m){
   const txt = label(key);
-  return m && m.method_note ? `<span title="${escAttr(m.method_note)}">${txt}</span>` : txt;
+  const text = m ? explainTextFor(m) : '';
+  if (!text) return txt;
+  const id = `explain-${explainSeq++}`;
+  return `<span ${explainTriggerAttrs(id)}>${txt}</span>${explainPanelHTML(id, text)}`;
 }
 
 // Every gauge-bearing metric key that appears anywhere in this view's clips —
@@ -497,7 +539,7 @@ function regionWorst(player, zone, map){
   return best;
 }
 
-function gaugeBarHTML(g){
+function gaugeBarHTML(g, explainId){
   if (!g) return '<div class="gauge-bar-wrap"><span style="font-size:11px;color:var(--muted);">No target band available for this metric in this export.</span></div>';
   const range = (g.max - g.min) || 1;
   const segs = (g.zones||[]).map(z => {
@@ -507,12 +549,17 @@ function gaugeBarHTML(g){
   }).join('');
   const valPos = Math.max(0, Math.min(100, (g.value - g.min)/range*100));
   const targetPos = g.target != null ? Math.max(0, Math.min(100, (g.target - g.min)/range*100)) : null;
+  // Value/target detail is already always-visible as plain text in the
+  // labels row below, so the bar itself just needs to be one big, easy
+  // tap target for the fuller explanation — not two sub-pixel tick tooltips
+  // that don't work on touch anyway.
+  const wrapAttrs = explainId ? `class="gauge-bar-wrap explain-trigger" onclick="toggleExplain('${explainId}')"` : 'class="gauge-bar-wrap"';
   return `
-    <div class="gauge-bar-wrap">
+    <div ${wrapAttrs}>
       <div class="gauge-bar-track">
         ${segs}
-        ${targetPos != null ? `<div class="gauge-bar-target" style="left:${targetPos}%;" title="Couro target: ${fmtNum(g.target,g.unit)}"></div>` : ''}
-        <div class="gauge-bar-marker" style="left:${valPos}%;" title="${fmtNum(g.value,g.unit)}"></div>
+        ${targetPos != null ? `<div class="gauge-bar-target" style="left:${targetPos}%;"></div>` : ''}
+        <div class="gauge-bar-marker" style="left:${valPos}%;"></div>
       </div>
       <div class="gauge-bar-labels"><span>${fmtNum(g.min,g.unit)}</span><span>target ${fmtNum(g.target,g.unit)}</span><span>${fmtNum(g.max,g.unit)}</span></div>
     </div>`;
@@ -825,6 +872,10 @@ function spotlightCardHTML(player, x, opts){
   const zoneColor = (g.current_zone||{}).color;
   const zoneLabel = (g.current_zone||{}).label;
   const family = metricFamily(w.m);
+  // Title and gauge bar share one explain panel, tap either to open it.
+  const explainText = explainTextFor(w.m);
+  const explainId = explainText ? `explain-${explainSeq++}` : null;
+  const titleHTML = explainId ? `<span ${explainTriggerAttrs(explainId)}>${label(key)}</span>` : label(key);
   // Only the single most-severe card per context gets the full templated
   // narrative paragraph — every real metric's "why" text follows the same
   // sentence shape, so showing it 3-4 times in a row on one page reads as
@@ -847,9 +898,10 @@ function spotlightCardHTML(player, x, opts){
       <div class="spotlight-body">
         ${opts.showPlayer ? `<div class="spotlight-player" onclick="showTab('${player.id}')">${jerseyTxt} <span>${player.view==='back'?'Back view':'Side view'}</span></div>` : ''}
         <div class="mhead">
-          <span class="mtitle">${opts.featured ? '<span class="conf-tag" style="color:var(--teal-deep);background:var(--teal-tint);">Signature clip</span> ' : ''}${metricLabelHTML(key, w.m)}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(family)}${confidenceTagHTML(w.m.confidence)}</span>
+          <span class="mtitle">${opts.featured ? '<span class="conf-tag" style="color:var(--teal-deep);background:var(--teal-tint);">Signature clip</span> ' : ''}${titleHTML}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(family)}${confidenceTagHTML(w.m.confidence)}</span>
         </div>
-        ${gaugeBarHTML(g)}
+        ${gaugeBarHTML(g, explainId)}
+        ${explainId ? explainPanelHTML(explainId, explainText) : ''}
         ${asymHTML(w)}
         ${why ? `<div class="narrative">${why}</div>` : ''}
         ${opts.showPlayer ? `<a href="#" class="spotlight-open" onclick="event.preventDefault(); showTab('${player.id}')">Open ${jerseyTxt}'s full page →</a>` : ''}
@@ -874,16 +926,21 @@ function compactMetricRowHTML(player, x){
   } else if (hasPhoto) {
     photoLinks = `<a href="#" class="photo-link" onclick="event.preventDefault(); openLightbox('${w.m.evidence_file}')">View photo</a> · `;
   }
+  // Title and gauge bar share one explain panel, tap either to open it.
+  const explainText = explainTextFor(w.m);
+  const explainId = explainText ? `explain-${explainSeq++}` : null;
+  const titleHTML = explainId ? `<span ${explainTriggerAttrs(explainId)}>${label(key)}</span>` : label(key);
   return `
     <div class="metric-block" id="metric-${player.id}-${key}">
       <div class="mhead">
-        <span class="mtitle">${metricLabelHTML(key, w.m)}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(metricFamily(w.m))}${confidenceTagHTML(w.m.confidence)}</span>
+        <span class="mtitle">${titleHTML}${zoneChipHTML(zoneColor, zoneLabel)}${regionTagHTML(player.view, key)}${loadTagHTML(metricFamily(w.m))}${confidenceTagHTML(w.m.confidence)}</span>
         <span class="magg">
           ${photoLinks}
           Worst of ${otherClipsN} clip${otherClipsN===1?'':'s'} · clip ${w.session_id}
         </span>
       </div>
-      ${gaugeBarHTML(g)}
+      ${gaugeBarHTML(g, explainId)}
+      ${explainId ? explainPanelHTML(explainId, explainText) : ''}
       ${asymHTML(w)}
       ${w.m.source ? `<div class="mini-cite">${w.m.source}</div>` : ''}
     </div>`;
@@ -966,6 +1023,8 @@ function playerTabHTML(player){
     </div>
   `).join('');
   const jerseyTxt = player.jersey ? `Jersey #${player.jersey}` : player.label.replace(/ \(.*\)/,'');
+  const regionInfoId = `explain-${explainSeq++}`;
+  const regionInfoText = "Couro's pre-selected focus, tied to the Sharks' own injury history — not automatically whichever regions scored worst in this capture. Shoulder and trunk are tracked too; see the verdict card above for all 5.";
   return `
     <p class="eyebrow" style="margin-bottom:14px;">${jerseyTxt} · ${player.view === 'back' ? 'Back view' : 'Side view'} · ${player.n_clips} clip${player.n_clips===1?'':'s'} captured</p>
 
@@ -979,7 +1038,8 @@ function playerTabHTML(player){
         </div>
       </div>
       <div>
-        <div class="sec-label" style="margin-top:0;">Injury-Risk Focus — Hip · Knee · Ankle<span style="display:inline-block; margin-left:6px; width:14px; height:14px; line-height:14px; border-radius:50%; background:var(--gold-tint); color:var(--gold-deep); font-size:10px; text-align:center; text-transform:none; letter-spacing:normal; font-weight:700; cursor:help; vertical-align:middle;" title="Couro's pre-selected focus, tied to the Sharks' own injury history — not automatically whichever regions scored worst in this capture. Shoulder and trunk are tracked too; see the verdict card above for all 5.">i</span></div>
+        <div class="sec-label" style="margin-top:0;">Injury-Risk Focus — Hip · Knee · Ankle<span ${explainTriggerAttrs(regionInfoId)} style="display:inline-block; margin-left:6px; width:14px; height:14px; line-height:14px; border-radius:50%; background:var(--gold-tint); color:var(--gold-deep); font-size:10px; text-align:center; text-transform:none; letter-spacing:normal; font-weight:700; vertical-align:middle; text-decoration:none;">i</span></div>
+        ${explainPanelHTML(regionInfoId, regionInfoText)}
         <p class="lead" style="font-size:13px;">Couro's three highest-value regions for skater injury history. The finding shown in each region below is this player's real worst measured reading — tap any zone for its evidence photo.</p>
         ${bodyMapHTML(player)}
       </div>
