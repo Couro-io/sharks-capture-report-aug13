@@ -263,10 +263,32 @@ p.lead{font-size:15.5px; color:var(--ink-2); max-width:70ch;}
 .shead{font-size:11.5px; font-weight:700;}
 
 .meth-block{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); margin-bottom:18px;}
-.partner-cobrand{display:flex; align-items:center; justify-content:center; gap:22px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:26px 20px; box-shadow:var(--shadow); margin-bottom:20px;}
-.partner-cobrand-logo{height:52px; width:auto; display:block;}
-.partner-cobrand-x{font-family:var(--serif); font-size:28px; color:var(--muted); font-weight:400;}
-.partner-cobrand-wordmark{font-size:20px; font-weight:800; letter-spacing:.04em; line-height:1.15; color:var(--teal-deep); text-align:left;}
+.partner-hero{position:relative; background:linear-gradient(135deg, var(--teal-deep), var(--teal)); border-radius:18px; padding:30px 30px 26px; margin-bottom:22px; box-shadow:var(--shadow); overflow:hidden;}
+.partner-hero-row{display:flex; align-items:center; gap:16px; margin-bottom:20px;}
+.partner-hero-logo{height:42px; width:auto; display:block;}
+.partner-hero-x{font-family:var(--serif); font-size:24px; color:rgba(255,255,255,.55); font-weight:400;}
+.partner-hero-wordmark{font-size:16px; font-weight:800; letter-spacing:.04em; line-height:1.2; color:#fff;}
+.partner-hero-tag{display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#fff; background:rgba(255,255,255,.16); padding:4px 10px; border-radius:20px; margin-bottom:10px;}
+.partner-hero h2{font-family:var(--serif); font-size:25px; font-weight:700; color:#fff; margin:0 0 8px; max-width:640px; text-wrap:balance;}
+.partner-hero p{font-size:13.5px; color:rgba(255,255,255,.85); margin:0; max-width:560px;}
+.partner-compare{margin-bottom:26px;}
+.partner-compare-grid{display:flex; align-items:center; gap:14px; margin-top:12px;}
+.partner-compare-card{flex:1; border-radius:14px; padding:18px 20px; border:1px solid var(--line);}
+.partner-compare-card.real{background:var(--red-tint); border-color:color-mix(in srgb, var(--red) 30%, var(--line));}
+.partner-compare-card.mock{background:var(--teal-tint); border:1px dashed color-mix(in srgb, var(--teal) 45%, var(--line));}
+.partner-compare-tag{display:block; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-2); margin-bottom:8px;}
+.partner-compare-tag.mock-tag{color:var(--teal-deep);}
+.partner-compare-metric{font-size:13px; font-weight:700; color:var(--ink); margin-bottom:4px;}
+.partner-compare-value{font-family:var(--serif); font-size:26px; font-weight:700; color:var(--ink);}
+.partner-compare-value small{font-size:13px; font-weight:500; color:var(--ink-2); margin-left:2px;}
+.partner-compare-note{font-size:11.5px; color:var(--ink-2); margin-top:8px; line-height:1.5;}
+.partner-compare-arrow{flex:0 0 auto; font-size:22px; color:var(--muted);}
+@media (max-width:700px){.partner-compare-grid{flex-direction:column;} .partner-compare-arrow{transform:rotate(90deg);}}
+.partner-icon{width:26px; height:26px; color:var(--teal-deep); margin-bottom:10px;}
+.partner-spark{width:100%; height:34px; display:block; margin-top:12px;}
+.partner-spark-label{font-size:10.5px; color:var(--muted); margin-top:4px; font-style:italic;}
+.partner-cta{background:var(--elevated); border:1px solid var(--line); border-radius:16px; padding:24px 28px; margin-top:22px; text-align:center;}
+.partner-cta-text{font-family:var(--serif); font-size:17px; font-weight:600; color:var(--ink); line-height:1.5; max-width:680px; margin:0 auto;}
 .partner-path{display:flex; align-items:flex-start; gap:0; margin:22px 0 4px;}
 .partner-path-step{flex:0 0 auto; display:flex; flex-direction:column; align-items:center; text-align:center; width:120px;}
 .partner-path-dot{width:14px; height:14px; border-radius:50%; background:var(--elevated); border:2px solid var(--line); margin-bottom:8px;}
@@ -1027,17 +1049,53 @@ function overviewHTML(){
 // report (the running-gait load model, single capture day, population-only
 // targets) so this reads as "here's what solves what you just saw," not
 // generic sales copy.
+const PARTNER_ICONS = {
+  gauge: '<path d="M3 15a8 8 0 0 1 16 0"/><path d="M11 15 L15 8"/><circle cx="11" cy="15" r="1.3" fill="currentColor" stroke="none"/>',
+  person: '<circle cx="11" cy="7" r="3.2"/><path d="M4.5 18c0-4 3-6.5 6.5-6.5S17.5 14 17.5 18"/>',
+  bars: '<path d="M4 18V13"/><path d="M11 18V9"/><path d="M18 18V5"/>',
+  nodes: '<circle cx="5" cy="6" r="2.2"/><circle cx="17" cy="6" r="2.2"/><circle cx="11" cy="17" r="2.2"/><path d="M7 7.2 L9.3 15.2"/><path d="M15 7.2 L12.7 15.2"/>',
+  doc: '<rect x="5" y="3" width="12" height="16" rx="1.6"/><path d="M8 8h6"/><path d="M8 12h6"/><path d="M8 16h3.5"/>',
+  camera: '<rect x="3" y="6.5" width="16" height="11" rx="1.8"/><path d="M8 6.5l1.4-2.2h3.2L14 6.5"/><circle cx="11" cy="12" r="3.2"/>',
+};
+function partnerIconHTML(name){
+  return `<svg class="partner-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${PARTNER_ICONS[name]}</svg>`;
+}
+
+// The "before" side is a real flagged finding already shown elsewhere in this
+// exact report (patellofemoral force, Side Athlete 1 — see their player page
+// and the Methodology load-estimate note); the "after" side is explicitly
+// labeled a mockup with no value, so it reads as "here's the shape of the
+// fix," not a fabricated result.
 function partnershipHTML(){
   return `
-    <div class="partner-cobrand">
-      <img src="couro_logo.png" alt="Couro" class="partner-cobrand-logo"/>
-      <span class="partner-cobrand-x">×</span>
-      <span class="partner-cobrand-wordmark">SAN JOSE<br/>SHARKS</span>
+    <div class="partner-hero">
+      <div class="partner-hero-row">
+        <img src="couro_logo.png" alt="Couro" class="partner-hero-logo"/>
+        <span class="partner-hero-x">×</span>
+        <span class="partner-hero-wordmark">SAN JOSE<br/>SHARKS</span>
+      </div>
+      <span class="partner-hero-tag">What we could build together</span>
+      <h2>One capture day, one phone camera, five real findings. This is the floor — not the ceiling.</h2>
+      <p>No pricing here, just what's technically possible if this becomes a standing part of how the Sharks train.</p>
     </div>
 
-    <div class="hook">
-      <span class="tag-hook">What we could build together</span>
-      <h2>This capture is a proof of concept. Here's what a real Sharks partnership could add — no pricing, just what's technically possible.</h2>
+    <div class="partner-compare">
+      <div class="sec-label" style="margin-top:0;">The gap this capture already shows — and what closes it</div>
+      <div class="partner-compare-grid">
+        <div class="partner-compare-card real">
+          <span class="partner-compare-tag">What this capture shows today</span>
+          <div class="partner-compare-metric">Patellofemoral Force</div>
+          <div class="partner-compare-value">6.12<small>×BW</small></div>
+          <div class="partner-compare-note">Running-gait model${confidenceTagHTML('Low')} · not confirmed for skating</div>
+        </div>
+        <div class="partner-compare-arrow">→</div>
+        <div class="partner-compare-card mock">
+          <span class="partner-compare-tag mock-tag">Illustrative mockup — not real data</span>
+          <div class="partner-compare-metric">Knee Load, On-Ice Model</div>
+          <div class="partner-compare-value">— <small>skating-specific units</small></div>
+          <div class="partner-compare-note">Purpose-built for stride push-off &amp; crossover loading · not yet built</div>
+        </div>
+      </div>
     </div>
 
     <div class="partner-path">
@@ -1065,35 +1123,50 @@ function partnershipHTML(){
 
     <div class="partner-grid">
       <div class="partner-card">
+        ${partnerIconHTML('gauge')}
         <span class="partner-tag">Sport-specific model</span>
         <h4>Hockey-native movement metrics</h4>
         <p>Every force-unit metric in this report (hip/shoulder load, patellofemoral force) runs on a running-gait model — flagged throughout as an estimate, not confirmed for skating. A hockey-specific capture and modeling pass would replace that with real skating mechanics: stride push-off, crossover mechanics, edge angles, stopping and pivot loads.</p>
       </div>
       <div class="partner-card">
+        ${partnerIconHTML('person')}
         <span class="partner-tag">Individual baseline</span>
         <h4>A movement signature that sharpens with every capture</h4>
         <p>Every number in this report compares a skater to Couro's population target band. With repeated captures per player over a season, Couro can baseline each skater against their own history — catching a real deviation from their own normal that a population band alone would miss.</p>
+        <svg class="partner-spark" viewBox="0 0 120 34" preserveAspectRatio="none">
+          <polyline points="2,27 20,23 38,25 56,16 74,18 92,10 110,8" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="110" cy="8" r="2.6" fill="var(--teal)"/>
+        </svg>
+        <div class="partner-spark-label">Illustrative — a skater narrowing in on their own normal, capture over capture</div>
       </div>
       <div class="partner-card">
+        ${partnerIconHTML('bars')}
         <span class="partner-tag">Longitudinal tracking</span>
         <h4>Full-roster, season-long trend</h4>
         <p>This report is one day, five skaters. A standing capture cadence — built into practice or game-day video you already collect — could cover the full roster and show real trend over a season, not just a single-day snapshot.</p>
       </div>
       <div class="partner-card">
+        ${partnerIconHTML('nodes')}
         <span class="partner-tag">Integration</span>
         <h4>Contextualized with your existing tech stack</h4>
         <p>A Couro finding is more useful sitting next to the data your staff already trusts. We can work toward integrating with force plates, wearables, ice-tracking systems, and your medical/training records so movement findings show up in context, not in an isolated report.</p>
       </div>
       <div class="partner-card">
+        ${partnerIconHTML('doc')}
         <span class="partner-tag">Research partnership</span>
         <h4>Hockey-grounded injury-risk thresholds</h4>
         <p>The risk framing in this report leans on general biomechanics literature. Working directly with your medical and performance staff, we can ground thresholds in the Sharks' own injury history and hockey-specific research — same approach already behind this report's top-3 injury-region body map.</p>
       </div>
       <div class="partner-card">
+        ${partnerIconHTML('camera')}
         <span class="partner-tag">Single camera, always</span>
         <h4>Still just one phone, no new equipment</h4>
         <p>Everything above builds on Couro's core model: one phone camera, not a multi-camera rig your staff has to manage. Whatever we add — hockey-specific metrics, longitudinal tracking, integrations — the capture workflow your staff sees stays this simple.</p>
       </div>
+    </div>
+
+    <div class="partner-cta">
+      <div class="partner-cta-text">The proof of concept is done. Every number in this report came from a single phone camera and one afternoon of ice time — the only question left is how far the Sharks want to take it.</div>
     </div>
   `;
 }
