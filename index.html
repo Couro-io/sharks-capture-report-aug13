@@ -287,6 +287,7 @@ p.lead{font-size:15.5px; color:var(--ink-2); max-width:70ch;}
 .partner-compare-tag.mock-tag{color:var(--teal-deep);}
 .partner-compare-metric{font-size:13px; font-weight:700; color:var(--ink); margin-bottom:4px;}
 .partner-compare-value{font-family:var(--serif); font-size:27px; font-weight:700; color:var(--ink);}
+.partner-compare-value-conf{font-size:19px; color:var(--teal-deep);}
 .partner-compare-value small{font-size:13px; font-weight:500; color:var(--ink-2); margin-left:2px;}
 .partner-compare-note{font-size:11.5px; color:var(--ink-2); margin-top:9px; line-height:1.5;}
 .partner-compare-arrow{flex:0 0 auto; align-self:center; width:36px; height:36px; border-radius:50%; background:var(--elevated); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--ink-2); box-shadow:var(--shadow);}
@@ -1093,23 +1094,24 @@ function partnershipHTML(){
     </div>
 
     <div class="partner-compare">
-      <div class="sec-label" style="margin-top:0;">The gap this capture already shows — and what closes it</div>
+      <div class="sec-label" style="margin-top:0;">The same metric, before and after a hockey-specific model</div>
+      <p class="lead" style="font-size:13px;">This is one real reading from this exact report — not two different metrics. The number and the model don't change, only which sport the model was built for.</p>
       <div class="partner-compare-grid">
         <div class="partner-compare-card real">
           <div class="partner-compare-inner">
-            <span class="partner-compare-tag">What this capture shows today</span>
+            <span class="partner-compare-tag">Today — running-gait model</span>
             <div class="partner-compare-metric">Patellofemoral Force</div>
             <div class="partner-compare-value">6.12<small>×BW</small></div>
-            <div class="partner-compare-note">Running-gait model${confidenceTagHTML('Low')} · not confirmed for skating</div>
+            <div class="partner-compare-note">${confidenceTagHTML('Low')} Borrowed from running mechanics · not confirmed for skating</div>
           </div>
         </div>
         <div class="partner-compare-arrow">→</div>
         <div class="partner-compare-card mock">
           <div class="partner-compare-inner">
-            <span class="partner-compare-tag mock-tag">Illustrative mockup — not real data</span>
-            <div class="partner-compare-metric">Knee Load, On-Ice Model</div>
-            <div class="partner-compare-value">— <small>skating-specific units</small></div>
-            <div class="partner-compare-note">Purpose-built for stride push-off &amp; crossover loading · not yet built</div>
+            <span class="partner-compare-tag mock-tag">Illustrative — hockey-specific model</span>
+            <div class="partner-compare-metric">Patellofemoral Force</div>
+            <div class="partner-compare-value partner-compare-value-conf">High confidence</div>
+            <div class="partner-compare-note">Same real measurement, modeled on actual skating mechanics — not yet built</div>
           </div>
         </div>
       </div>
